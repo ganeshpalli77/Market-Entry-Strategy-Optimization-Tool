@@ -8,7 +8,7 @@ import pandas_bokeh
 import missingno
 
 def create_correlation_chart(corr_df): ## Create Correlation Chart using Matplotlib
-    fig = plt.figure(figsize=(15,15))
+    fig = plt.figure(figsize=(15,15 ))
     plt.imshow(corr_df.values, cmap="Blues")
     plt.xticks(range(corr_df.shape[0]), corr_df.columns, rotation=90, fontsize=15)
     plt.yticks(range(corr_df.shape[0]), corr_df.columns, fontsize=15)
