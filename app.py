@@ -23,7 +23,7 @@ def create_correlation_chart(corr_df): ## Create Correlation Chart using Matplot
 def create_missing_values_bar(df):
     missing_fig = plt.figure(figsize=(10,5))
     ax = missing_fig.add_subplot(111)
-    missingno.bar(df, figsize=(10,5), fontsize=12, ax=ax)
+    missingno.bar(df, figsize=(10,5), fontsize=13, ax=ax)
 
     return missing_fig
 
