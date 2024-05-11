@@ -117,3 +117,66 @@ if upload: ## File as Bytes
                                     figsize=(600,500), fontsize_title=20, fontsize_label=15,
                                     show_figure=False)
         st.bokeh_chart(scatter_fig, use_container_width=True)
+
+# Set your OpenAI API key
+openai.api_key = 'sk-proj-I7qbtei6AZXwk91uVF1xT3BlbkFJQ5avvdxGHVdfuaHGDNSb'
+
+def load_data(file):
+    # Load data from CSV
+    df = pd.read_csv(file)
+    return df
+
+def extract_key_attributes(df):
+    # Using OpenAI to extract key attributes from the data
+    try:
+        prompt = f"Analyze the following dataset and extract key attributes:\n\n{df.head().to_string(index=False)}"
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an assistant that extracts key attributes from data."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.5
+        )
+        key_attributes = response['choices'][0]['message']['content']
+    except Exception as e:
+        key_attributes = f"Error in extracting attributes: {str(e)}"
+    return key_attributes
+
+def generate_sales_report(attributes):
+    # Generate a detailed sales report using the OpenAI chat model
+    try:
+        messages = [
+            {"role": "system", "content": "You are an intelligent assistant capable of generating detailed sales reports based on key business attributes."},
+            {"role": "user", "content": f"Based on these key attributes: {attributes}, generate a detailed sales report with recommendations for business decisions and give graphs and charts."}
+        ]
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=messages,
+            temperature=0.5
+        )
+        report = response['choices'][0]['message']['content']
+    except Exception as e:
+        report = f"Error in generating sales report: {str(e)}"
+    return report
+
+def main():
+    st.title('Advanced Sales Data Analysis Tool')
+
+    uploaded_file = st.file_uploader("Upload your CSV file", type=['csv'])
+    if uploaded_file is not None:
+        df = load_data(uploaded_file)
+        st.dataframe(df)
+
+        if st.button('Extract Key Attributes'):
+            attributes = extract_key_attributes(df)
+            st.session_state['extracted_attributes'] = attributes
+            st.write('Extracted Key Attributes:', attributes)
+
+        if 'extracted_attributes' in st.session_state:
+            if st.button('Generate Detailed Sales Report'):
+                report = generate_sales_report(st.session_state['extracted_attributes'])
+                st.write('Detailed Sales Report:', report)
+
+if __name__ == '__main__':
+    main()
