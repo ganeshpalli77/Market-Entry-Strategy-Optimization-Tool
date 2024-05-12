@@ -184,13 +184,20 @@ if __name__ == '__main__':
     main()
 
 
+import streamlit as st
+import openai
+import time
+
+# Set your OpenAI API key here
+openai.api_key = 'sk-proj-I7qbtei6AZXwk91uVF1xT3BlbkFJQ5avvdxGHVdfuaHGDNSb'
+
 def get_response(question):
     """This function sends a question to the OpenAI API and returns the response."""
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant trained on general knowledge about Marico."},
+                {"role": "system", "content": "You are a helpful assistant trained on general knowledge about Marico.other than questions related to marico ltd answer i dont know"},
                 {"role": "user", "content": question},
             ]
         )
@@ -198,17 +205,13 @@ def get_response(question):
     except Exception as e:
         return str(e)
 
-# Streamlit app layout
-st.title('Marico Chatbot')
 
-# Sidebar for input
+# Sidebar for input and output
 with st.sidebar:
     user_input = st.text_input("Ask me anything about Marico:")
-
-# Main page for displaying the answer
-if user_input:
-    with st.spinner('Fetching your answer...'):
-        # Simulate delay for loading effect
-        time.sleep(2)  # Adjust sleep time to simulate response time
-        answer = get_response(user_input)
-    st.text_area("Answer:", value=answer, height=200, max_chars=None)
+    st.title('Marico Chatbot')
+    if user_input:
+        with st.spinner('Fetching your answer...'):
+            time.sleep(2)  # Simulate delay for loading effect
+            answer = get_response(user_input)
+        st.text_area("Answer:", value=answer, height=200, max_chars=None)
