@@ -2,13 +2,15 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from collections import Counter
+import time
 
 import matplotlib.pyplot as plt
 import pandas_bokeh
 import missingno
+import openai
 
 def create_correlation_chart(corr_df): ## Create Correlation Chart using Matplotlib
-    fig = plt.figure(figsize=(15,15 ))
+    fig = plt.figure(figsize=(15,15))
     plt.imshow(corr_df.values, cmap="Blues")
     plt.xticks(range(corr_df.shape[0]), corr_df.columns, rotation=90, fontsize=15)
     plt.yticks(range(corr_df.shape[0]), corr_df.columns, fontsize=15)
@@ -23,7 +25,7 @@ def create_correlation_chart(corr_df): ## Create Correlation Chart using Matplot
 def create_missing_values_bar(df):
     missing_fig = plt.figure(figsize=(10,5))
     ax = missing_fig.add_subplot(111)
-    missingno.bar(df, figsize=(10,5), fontsize=13, ax=ax)
+    missingno.bar(df, figsize=(10,5), fontsize=12, ax=ax)
 
     return missing_fig
 
@@ -37,9 +39,9 @@ def find_cat_cont_columns(df): ## Logic to Separate Continuous & Categorical Col
     return cont_columns, cat_columns
 
 ### Web App / Dashboard Code
-st.set_page_config(page_icon=":bar_chart:", page_title="Market Entry Strategy Optimization Tool")
+st.set_page_config(page_icon=":bar_chart:", page_title="Market Entry Strategy Optimization Tool")
 
-st.title("Market Entry Strategy Optimization Tool")
+st.title("Market Entry Strategy Optimization Tool")
 st.caption("Upload CSV file to see various Charts related to EDA. Please upload file that has both continuous columns and categorical columns. Once you upload file, various charts, widgets and basic stats will be displayed.", unsafe_allow_html=True)
 upload = st.file_uploader(label="Upload File Here:", type=["csv"])
 
@@ -180,3 +182,33 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def get_response(question):
+    """This function sends a question to the OpenAI API and returns the response."""
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant trained on general knowledge about Marico."},
+                {"role": "user", "content": question},
+            ]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return str(e)
+
+# Streamlit app layout
+st.title('Marico Chatbot')
+
+# Sidebar for input
+with st.sidebar:
+    user_input = st.text_input("Ask me anything about Marico:")
+
+# Main page for displaying the answer
+if user_input:
+    with st.spinner('Fetching your answer...'):
+        # Simulate delay for loading effect
+        time.sleep(2)  # Adjust sleep time to simulate response time
+        answer = get_response(user_input)
+    st.text_area("Answer:", value=answer, height=200, max_chars=None)
