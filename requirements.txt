@@ -3,3 +3,8 @@ pandas
 pandas-bokeh
 bokeh<=2.4.3
 missingno
+openai==0.28
+streamlit
+plotly==5.22.0
+scikit-learn
+TIME-python
